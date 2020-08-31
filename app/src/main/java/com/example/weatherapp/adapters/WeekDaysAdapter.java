@@ -9,15 +9,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.weatherapp.R;
 import com.example.weatherapp.models.Days;
+import com.example.weatherapp.models.dayli.Daily;
+import com.example.weatherapp.models.dayli.WeatherDayliModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class WeekDaysAdapter extends RecyclerView.Adapter<WeekDaysAdapter.DaysHolder> {
-   private List<Days> daysList;
+   private List<WeatherDayliModel> daysList;
+   private Daily daily;
 
-    public WeekDaysAdapter(List<Days> daysList) {
+    public WeekDaysAdapter(List<WeatherDayliModel> daysList) {
         this.daysList = daysList;
     }
 
@@ -49,9 +55,17 @@ public class WeekDaysAdapter extends RecyclerView.Adapter<WeekDaysAdapter.DaysHo
 
         }
 
-        public void onBind(Days days){
-            dayImage.setImageResource(days.getDayImage());
-            weekDay.setText(days.getWeekDay());
+        public void onBind(WeatherDayliModel model){
+//            String iconID = "http://openweathermap.org/img/wn/" + model.getWeather().getIcon() + "@2x.png";
+//            Glide.with(itemView.getContext()).load(iconID).into(dayImage);
+            for (int i = 0; i <=7 ; i++) {
+                daily = model.getDaily().get(i);
+            Date date = new java.util.Date(daily.getDt() * 1000L);
+            SimpleDateFormat sdf = new java.text.SimpleDateFormat("EEE");
+            sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+3"));
+            String formattedDate = sdf.format(date);
+            weekDay.setText(formattedDate);
+            }
         }
 
 

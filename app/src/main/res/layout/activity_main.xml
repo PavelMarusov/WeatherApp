@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:background="@drawable/day_sity"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".presentstion.MainActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -107,27 +107,27 @@
             android:layout_height="68dp"
             android:layout_marginTop="12dp"
             android:src="@drawable/ic_sunny"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="16dp" />
-
+           android:layout_marginLeft="10dp" />
         <TextView
             android:id="@+id/weathe_type_tv"
-            android:layout_width="72dp"
+            android:layout_width="wrap_content"
             android:layout_height="21dp"
-            android:text="Sunny"
             android:gravity="center"
+            android:text="Sunny"
+            android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/could_iv"
-            app:layout_constraintVertical_bias="0.473"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="21dp" />
+            android:layout_marginStart="20dp"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/temperatyre"
             android:layout_width="89dp"
             android:layout_height="74dp"
-            android:layout_marginStart="52dp"
+            android:layout_marginStart="32dp"
             android:text="0"
             android:textStyle="bold"
             android:textSize="60sp"
