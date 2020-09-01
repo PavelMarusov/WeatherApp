@@ -1,12 +1,12 @@
 package com.example.weatherapp.presentstion;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -23,19 +23,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.SharedPreferences.*;
-
 public class MapActivity extends FragmentActivity implements View.OnClickListener {
-private GoogleMap maps;
-private SupportMapFragment mapFragment;
-private Button drawLine;
-private List<LatLng> coordinates;
-private Polygon poligon;
-private Context context;
+    private GoogleMap maps;
+    private SupportMapFragment mapFragment;
+    private Button drawLine;
+    private List<LatLng> coordinates;
+    private Polygon polуgon;
+    private Context context;
+    public static SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +44,19 @@ private Context context;
         setContentView(R.layout.activity_map);
         drawLine = findViewById(R.id.draw_line);
         coordinates = new ArrayList<>();
-        context= getApplicationContext();
+        context = getApplicationContext();
+        preferences = context.getSharedPreferences("coord", MODE_PRIVATE);
         drawLine.setOnClickListener(this::onClick);
         showMap();
+        if (getSharedPreferences("coord",context.MODE_PRIVATE)!=null&& coordinates!=null){
+            coordinates=getLocation(coordinates);
+        }
     }
 
     private void showMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().
                 findFragmentById(R.id.map);
-        mapFragment.getMapAsync (new OnMapReadyCallback() {
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 maps = googleMap;
@@ -68,14 +73,16 @@ private Context context;
         });
 
     }
-    public void saveCoordinates(List<LatLng> coordinates){
-       SharedPreferences preferences = context.getSharedPreferences("coord",MODE_PRIVATE);
-      @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = preferences.edit();
-        Gson gson =  new Gson();
-       String json = gson.toJson(coordinates);
-       editor.putString("coords",json);
-       editor.apply();
+
+    public void saveCoordinates(List<LatLng> coordinates) {
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = preferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(coordinates);
+        editor.putString("coords", json);
+        editor.apply();
+        Log.d("pop", "LatLng" + json);
         Toast.makeText(this, "Координаты сохранены", Toast.LENGTH_SHORT).show();
+
 
 
     }
@@ -83,15 +90,25 @@ private Context context;
 
     @Override
     public void onClick(View v) {
-        PolygonOptions options =  new PolygonOptions();
+        PolygonOptions options = new PolygonOptions();
         options.strokeWidth(4f);
         options.strokeColor(getResources().getColor(R.color.colorLine));
-        for (LatLng latLng:coordinates){
+        for (LatLng latLng : coordinates) {
             options.add(latLng);
         }
         maps.addPolygon(options);
         saveCoordinates(coordinates);
     }
-
+    public static List<LatLng> getLocation(List<LatLng> latLngs) {
+        Gson gson = new Gson();
+        String json = preferences.getString("coords", null);
+        Type type = new TypeToken<List<LatLng>>() {
+        }.getType();
+        latLngs = gson.fromJson(json, type);
+        if (latLngs == null) {
+            latLngs = new ArrayList<>();
+        }
+        return latLngs;
+    }
 }
 
